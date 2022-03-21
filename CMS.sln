@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggingService", "LoggingSe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{8299E180-B854-45E3-B200-89285E1D1544}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService", "DataService\DataService.csproj", "{10928BCD-ED7E-4466-B426-68000E9B5F96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService", "DataService\DataService.csproj", "{10928BCD-ED7E-4466-B426-68000E9B5F96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelService", "ModelService\ModelService.csproj", "{A3E5B84D-F457-4ABC-8188-BE057DC3C810}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelService", "ModelService\ModelService.csproj", "{A3E5B84D-F457-4ABC-8188-BE057DC3C810}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalService", "FunctionalService\FunctionalService.csproj", "{3A3F99AE-F292-4B11-A9A3-D6DB0287D18A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionalService", "FunctionalService\FunctionalService.csproj", "{3A3F99AE-F292-4B11-A9A3-D6DB0287D18A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

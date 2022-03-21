@@ -50,7 +50,7 @@ namespace FunctionalService
 
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(admin, "Administrator");
+                    await userManager.AddToRoleAsync(admin, "Administrator");
                     Log.Information("Admin user created {UserName}", admin.UserName);
                 }
                 else
