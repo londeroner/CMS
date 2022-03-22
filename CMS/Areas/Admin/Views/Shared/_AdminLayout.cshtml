@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>CMS</title>
+    <title>Admin Page   </title>
     <meta name="description" content="CMS ASP.NET Core Learn Application" />
     <meta name="author" content="Londeroner" />
     <link href="~/favicon.ico" rel="icon" />
@@ -12,11 +12,14 @@
 </head>
 <body>
     <div class="wrapper">
+        @await Html.PartialAsync("_SidebarLayout")
         <div id="content">
+            @await Html.PartialAsync("_TopbarLayout")
             @RenderBody()
         </div>
     </div>
-    @await Html.PartialAsync("_UIScriptsPartial") 
+    @await Html.PartialAsync("_FooterLayout")
+    @await Html.PartialAsync("_UIScriptsPartial")
     @RenderSection("Scripts", required: false)
 </body>
 </html>
