@@ -10,7 +10,7 @@ namespace CMS.Areas.Admin.Controllers
     [Area("Admin")]
     public class AccountController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Login()
         {
             return View();
         }

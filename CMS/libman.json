@@ -17,6 +17,10 @@
     {
       "library": "font-awesome@5.13.0",
       "destination": "wwwroot\\lib\\font-awesome"
+    },
+    {
+      "library": "limonte-sweetalert2@11.4.6",
+      "destination": "wwwroot\\lib\\limonte-sweetalert2"
     }
   ]
 }
