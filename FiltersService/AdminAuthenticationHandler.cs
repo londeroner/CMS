@@ -13,6 +13,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using DataService;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Claims;
 
 namespace FiltersService
 {
@@ -89,7 +93,48 @@ namespace FiltersService
 
                 var decryptedToken = protector.Unprotect(headerValue.Parameter);
 
+                TokenModel token = new TokenModel();
 
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var dbContextService = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                    var userToken = dbContextService.Tokens.Include(x => x.User)
+                        .FirstOrDefault(ut => ut.UserId == decryptedUID
+                                           && ut.User.UserName == Request.Cookies[Username]
+                                           && ut.User.Id == decryptedUID
+                                           && ut.User.UserRole == "Administrator");
+                    token = userToken;
+                }
+
+                if (token is null)
+                    return await Task.FromResult(AuthenticateResult.Fail("You are not authorized to View this page"));
+
+                IDataProtector layerTwoProtector = protectorProvider.CreateProtector(token.EncryptionKeyJwt);
+                string decryptedTokenLayerTwo = layerTwoProtector.Unprotect(decryptedToken);
+
+                var validateToken = handler.ValidateToken(decryptedTokenLayerTwo, validationParameters, out var securityToken);
+
+                if (!(securityToken is JwtSecurityToken jwtSecurityToken) ||
+                    !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                    StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return await Task.FromResult(AuthenticateResult.Fail("You are not authorized to View this page"));
+                }
+
+                var userName = validateToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (Request.Cookies[Username] != userName)
+                    return await Task.FromResult(AuthenticateResult.Fail("You are not authorized to View this page"));
+
+                var user = await _userManager.FindByNameAsync(userName);
+
+                if (user is null || !UserRoles.Contains(user.UserRole))
+                    return await Task.FromResult(AuthenticateResult.Fail("You are not authorized to View this page"));
+
+                var identity = new ClaimsIdentity(validateToken.Claims, Scheme.Name);
+                var principal = new ClaimsPrincipal(identity);
+                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+                return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
             catch (Exception e)
             {
@@ -101,6 +146,11 @@ namespace FiltersService
 
         protected override Task HandleChallengeAsync(AuthenticationProperties properties)
         {
+            Response.Cookies.Delete("access_token");
+            Response.Cookies.Delete("user_id");
+            Response.Headers["WWW-Authenticate"] = $"Not authorized";
+            Response.Redirect(_identityDefaultOptions.AccessDeniedPath);
+
 
             return Task.CompletedTask;
         }
