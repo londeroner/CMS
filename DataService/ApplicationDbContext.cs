@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using ModelService;
 
 namespace DataService
@@ -25,5 +26,6 @@ namespace DataService
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<AddressModel> Addresses { get; set; }  
         public DbSet<TokenModel> Tokens { get; set; }
+        public DbSet<ActivityModel> Activities { get; set; }
     }
 }

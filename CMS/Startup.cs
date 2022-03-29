@@ -1,7 +1,14 @@
+using ActivityService;
+using AuthService;
+using CookieService;
 using DataService;
+using FiltersService;
 using FunctionalService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +17,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using ModelService;
 using System;
+using System.Text;
 
 namespace CMS
 {
@@ -34,16 +43,18 @@ namespace CMS
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            //----------------------------DBConnections
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DataBase_DEV"),
                 x => x.MigrationsAssembly("CMS")));
-
             services.AddDbContext<DataProtectionKeysContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DataProtection"),
                 x => x.MigrationsAssembly("CMS")));
 
+            //----------------------------Functional Service
             services.Configure<AdminUserOptions>(Configuration.GetSection("AdminUserOptions"));
             services.Configure<AppUserOptions>(Configuration.GetSection("AppUserOptions"));
             services.AddTransient<IFunctionalSvc, FunctionalSvc>();
 
+            //----------------------------Default Identity Options
             var identityDefaultOptionsConf = Configuration.GetSection("IdentityDefaultOptions");
             services.Configure<IdentityDefaultOptions>(identityDefaultOptionsConf);
             var identityDefaultOptions = identityDefaultOptionsConf.Get<IdentityDefaultOptions>();
@@ -66,6 +77,48 @@ namespace CMS
                 options.SignIn.RequireConfirmedEmail = identityDefaultOptions.SignInRequireConfirmedemail;
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+            //----------------------------App Settings
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            //----------------------------Data Protection Service
+            var dataProtectionSection = Configuration.GetSection("DataProtectionKeys");
+            services.Configure<DataProtectionKeys>(dataProtectionSection);
+            services.AddDataProtection().PersistKeysToDbContext<DataProtectionKeysContext>();
+
+            //----------------------------JWT Authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(o =>
+            {
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = appSettings.ValidateIssuerSigningKey,
+                    ValidateIssuer = appSettings.ValidateIssuer,
+                    ValidateAudience = appSettings.ValidateAudience,
+                    ValidIssuer = appSettings.Site,
+                    ValidAudience = appSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+            //----------------------------Authentication Services
+            services.AddTransient<IAuthSvc, AuthSvc>();
+            services.AddTransient<IActivitySvc, ActivitySvc>();
+            services.AddAuthentication("Administrator").AddScheme<AdminAuthenticationOptions, AdminAuthenticationHandler>("Admin", null);
+
+            //----------------------------Cookie Service
+            services.AddHttpContextAccessor();
+            services.AddTransient<CookieOptions>();
+            services.AddTransient<ICookieSvc, CookieSvc>();
+
+            //----------------------------Razor Pages Runtime Service
             services.AddMvc().AddControllersAsServices().AddRazorRuntimeCompilation().SetCompatibilityVersion(CompatibilityVersion.Latest);
         }
 
