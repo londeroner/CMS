@@ -51,4 +51,59 @@
 
 @section Scripts { 
     <script src="~/lib/limonte-sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        $(function () {
+            console.log("ready...!");
+            $("#Loginsubmit").on('click', (event) => {
+                event.preventDefault();
+                let postData = new FormData(event.target.form);
+                var LoginViewModel = { "Email": "", "Password": "", "RememberMe": false };
+                LoginViewModel.Email = postData.get("Email");
+                LoginViewModel.Password = postData.get("Password");
+                LoginViewModel.RememberMe = (postData.get("RememberMe") !== "false");
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Login", "Account")',
+                    data: JSON.stringify(LoginViewModel),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        Swal.fire({
+                            title: 'Success',
+                            text: "Logged In Successfully",
+                            type: 'success',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function (result) {
+                            if (result) {
+                                window.location = "/admin/home";
+                            }
+                        })
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const errors = jqXHR.responseText.split(",");
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Login Failed',
+                            footer: makeArrayList(errors),
+                        })
+                    }
+                })
+            })
+        });
+        function makeArrayList(array)
+        {
+            let list = document.createElement('ul');
+            list.className = "list-group";
+            for (let i = 0; i < array.length; i++) {
+                let item = document.createElement('li');
+                item.className = "list-group-item bg-danger text-white";
+                item.appendChild(document.createTextNode(array[i].replace(/[\[\]"]/g, '').replace(/[\[\]{]/g, '').replace(/[\[\]}]/g, '')));
+                list.appendChild(item);
+            }
+            return list;
+        }
+    </script>
 }

@@ -27,7 +27,7 @@ namespace CMS.Areas.Admin.Controllers
         private DataProtectionKeys _dataProtectionKeys;
 
         private const string AccessToken = "access_token";
-        private const string User_Id = "used_id";
+        private const string User_Id = "user_id";
         string[] cookiesToDelete = { "twoFactorToken", "memberId", "rememberDevice", "user_id", "access_token" };
 
         public AccountController(IOptions<AppSettings> appSettings, IServiceProvider provider,
@@ -43,9 +43,24 @@ namespace CMS.Areas.Admin.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
-            return View();
+            await Task.Delay(0);
+            ViewData["ReturnUrl"] = returnUrl;
+            try
+            {
+                if (!Request.Cookies.ContainsKey(AccessToken) || !Request.Cookies.ContainsKey(User_Id))
+                {
+                    return View();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("An error occurred while seeding the database  {Error} {StackTrace} {InnerException} {Source}",
+                    ex.Message, ex.StackTrace, ex.InnerException, ex.Source);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]

@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Net;
 
 namespace CookieService
 {
@@ -19,17 +23,59 @@ namespace CookieService
 
         public string GetUserIP() 
         {
-            return string.Empty;
+            string userIP = "unknown";
+
+            try
+            {
+                userIP = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("An error occurred while seeding the database  {Error} {StackTrace} {InnerException} {Source}",
+                    ex.Message, ex.StackTrace, ex.InnerException, ex.Source);
+            }
+
+            return userIP;
         }
 
         public string GetUserCountry()
         {
-            return string.Empty;
+            try
+            {
+                string userIP = GetUserIP();
+                string info = new WebClient().DownloadString("http://ipinfo.io/" + userIP);
+                var ipInfo = JsonConvert.DeserializeObject<IPInfo>(info);
+                RegionInfo regionInfo = new RegionInfo(ipInfo.Country);
+                ipInfo.Country = regionInfo.EnglishName;
+
+                if (!string.IsNullOrEmpty(userIP))
+                    return ipInfo.Country;
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error("An error occurred while seeding the database  {Error} {StackTrace} {InnerException} {Source}",
+                    ex.Message, ex.StackTrace, ex.InnerException, ex.Source);
+            }
+
+            return "unknown";
         }
 
         public string GetUserOS()
         {
-            return string.Empty;
+            string userOS = "unknown";
+
+            try
+            {
+                userOS = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("An error occurred while seeding the database  {Error} {StackTrace} {InnerException} {Source}",
+                    ex.Message, ex.StackTrace, ex.InnerException, ex.Source);
+            }
+
+            return userOS;
         }
 
         public void SetCookie(string key, string value, int? expireTime, bool isSecure, bool isHttpOnly)
