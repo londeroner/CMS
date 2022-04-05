@@ -44,9 +44,9 @@ namespace CMS
             });
 
             //----------------------------DBConnections
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DataBase_DEV"),
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DataBase_DEV"),
                 x => x.MigrationsAssembly("CMS")));
-            services.AddDbContext<DataProtectionKeysContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DataProtection"),
+            services.AddDbContext<DataProtectionKeysContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DataProtection"),
                 x => x.MigrationsAssembly("CMS")));
 
             //----------------------------Functional Service
