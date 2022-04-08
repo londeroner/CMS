@@ -1,6 +1,7 @@
 using ActivityService;
 using AuthService;
 using CookieService;
+using CountryService;
 using DataService;
 using FiltersService;
 using FunctionalService;
@@ -21,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelService;
 using System;
 using System.Text;
+using UserService;
 
 namespace CMS
 {
@@ -86,6 +88,9 @@ namespace CMS
             services.Configure<DataProtectionKeys>(dataProtectionSection);
             services.AddDataProtection().PersistKeysToDbContext<DataProtectionKeysContext>();
 
+            //----------------------------User Service
+            services.AddTransient<IUserSvc, UserSvc>();
+
             //----------------------------JWT Authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -117,6 +122,9 @@ namespace CMS
             services.AddHttpContextAccessor();
             services.AddTransient<CookieOptions>();
             services.AddTransient<ICookieSvc, CookieSvc>();
+
+            //----------------------------Country Service
+            services.AddTransient<ICountrySvc, CountrySvc>();
 
             //----------------------------Razor Pages Runtime Service
             services.AddMvc().AddControllersAsServices().AddRazorRuntimeCompilation().SetCompatibilityVersion(CompatibilityVersion.Latest);

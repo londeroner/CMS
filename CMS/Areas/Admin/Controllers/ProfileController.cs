@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UserService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ProfileController : Controller
     {
         private readonly ICookieSvc _cookieSvc;
@@ -35,19 +37,22 @@ namespace CMS.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View();
+            await SetAdminBaseViewModel();
+            return View("Index", _adminBaseViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> Security()
         {
-            return View();
+            await SetAdminBaseViewModel();
+            return View("Security", _adminBaseViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> Activity()
         {
-            return View();
+            await SetAdminBaseViewModel();
+            return View("Activity", _adminBaseViewModel);
         }
 
     
@@ -66,7 +71,7 @@ namespace CMS.Areas.Admin.Controllers
                 Dashboard = null,
                 ResetPassword = resetPassword,
                 SiteWideSettings = null
-            }
+            };
         }
     }
 }

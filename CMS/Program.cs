@@ -1,3 +1,4 @@
+using CountryService;
 using DataService;
 using FunctionalService;
 using LoggingService;
@@ -27,8 +28,9 @@ namespace CMS
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     var DPcontext = services.GetRequiredService<DataProtectionKeysContext>();
                     var functional = services.GetRequiredService<IFunctionalSvc>();
+                    var country = services.GetRequiredService<ICountrySvc>();
 
-                    DbContextInitializer.Initialize(DPcontext, context, functional).Wait();
+                    DbContextInitializer.Initialize(DPcontext, context, functional, country).Wait();
                 }
                 catch (Exception e)
                 {

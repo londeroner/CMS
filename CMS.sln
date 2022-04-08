@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CookieService", "CookieServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityService", "ActivityService\ActivityService.csproj", "{D9439045-1FF8-4B0F-A0C8-2FB2869F9138}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\UserService.csproj", "{31289FF5-03F5-4A87-BDB6-0EC13309DB73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "UserService\UserService.csproj", "{31289FF5-03F5-4A87-BDB6-0EC13309DB73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryService", "CountryService\CountryService.csproj", "{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{31289FF5-03F5-4A87-BDB6-0EC13309DB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31289FF5-03F5-4A87-BDB6-0EC13309DB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31289FF5-03F5-4A87-BDB6-0EC13309DB73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{8765309C-D88F-4420-A1B3-19B2064C90D5} = {8299E180-B854-45E3-B200-89285E1D1544}
 		{D9439045-1FF8-4B0F-A0C8-2FB2869F9138} = {8299E180-B854-45E3-B200-89285E1D1544}
 		{31289FF5-03F5-4A87-BDB6-0EC13309DB73} = {8299E180-B854-45E3-B200-89285E1D1544}
+		{00FDBC70-DB47-4F51-B3B0-5A595A7A7EF6} = {8299E180-B854-45E3-B200-89285E1D1544}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90FA7751-DF7F-4CB7-B62F-EEBC5BEEFEC8}
